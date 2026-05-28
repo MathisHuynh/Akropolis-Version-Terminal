@@ -1,5 +1,4 @@
 #pragma once
-#include <windows.h>
 #include <iostream>
 #include <memory>
 #include <map>
@@ -45,7 +44,7 @@ public:
 	std::string getInfo() { return info; }
 };
 
-//Caractéristiques
+//Caractï¿½ristiques
 enum class Couleur { bleu, rouge, vert, jaune, violet, blanc };
 
 
@@ -59,7 +58,7 @@ extern std::vector<Couleur> vCouleurs;
 
 std::string toFond(int h); // 0<=h<=23
 
-// écriture d'une caractéristique sur un flux ostream
+// ï¿½criture d'une caractï¿½ristique sur un flux ostream
 std::ostream& operator<<(std::ostream& f, Couleur c);
 
 
@@ -67,5 +66,5 @@ std::ostream& operator<<(std::ostream& f, Couleur c);
 //---------------------------------------------------------------------------------------------------CLASSES---------------------------------------------------------------------------------------------------
 
 
-//Classe coordonnées
+//Classe coordonnï¿½es
 using Coord = std::pair<int, int>;

@@ -102,7 +102,7 @@ void runConsoleMode()
 int main(int argc, char* argv[]){
 	std::cout << __cplusplus << std::endl;
 
-	system("cls");
+	clearScreen();
 	MenuRestreint menu = MenuRestreint("CHOIX DE LA VERSION", "AKROPOLIS");
 	menu.ajouterOption({ "Version Terminal" });
 	menu.ajouterOption({ "Version GUI (Qt)" });
@@ -111,10 +111,10 @@ int main(int argc, char* argv[]){
 	case 1: runConsoleMode(); //Mode Terminal
 		break;
 	case 2:
-		system("cls");
+		clearScreen();
 		// runGuiMode(argc,argv); //Mode Qt
 		break;
 	}
-	system("cls");
+	clearScreen();
 	return 0;
 }	

@@ -1,7 +1,6 @@
 #include "Vue.h"
 #include "MenuTerminal.h"
 #include "Jeu.h"
-#include <windows.h>
 #include <conio.h>
 #include <cctype>
 
@@ -282,7 +281,7 @@ void VueTerminal::afficherChantier(const std::vector<TuilePtr>& c, size_t index,
 
 
 void VueTerminal::afficherIllustreArchitecte(const IllustreArchitecte& j) const{
-	system("cls");
+	clearScreen();
 	std::cout << "Tuiles de l'illustre architecte:\n";
 	afficher(j.getTuiles());
 	std::cout << "\n Appuyez sur entree pour continuer";
@@ -307,7 +306,7 @@ void VueTerminal::afficherInfos(const JoueurHumain& joueur) const {
 size_t VueTerminal::choixTuile(const JoueurHumain& joueur) const {
 	size_t choix;
 	while (true) {
-		system("cls");
+		clearScreen();
 
 		afficherInfos(joueur);
 
@@ -324,7 +323,7 @@ size_t VueTerminal::choixTuile(const JoueurHumain& joueur) const {
 		if (entreeNumerique(entree, getChantierRead().size() - 1)) {
 			choix = std::stoi(entree);
 			if (choix <= joueur.getPierres()) return choix;
-			system("cls");
+			clearScreen();
 			std::cout << "Pas assez de pierres, appuyez sur Entree pour continuer";
 			int c = _getch();
 			while (c != ENTREE) c = _getch();
@@ -344,7 +343,7 @@ bool VueTerminal::choixPivot(const JoueurHumain& joueur, size_t index, Coord& pi
 	Coord save = pivot;
 	const std::map<Coord, const Hex*>& t = partie->getChantierRead()[index]->getHexs();
 	while (true) {
-		system("cls");
+		clearScreen();
 		afficherInfos(joueur);
 		std::cout << "\n Chantier:\n";
 		afficherChantier(partie->getChantierRead(), index, pivot);
@@ -387,7 +386,7 @@ bool VueTerminal::choixCase(const JoueurHumain& joueur, Coord& pos, size_t index
 	Coord save = pos;
 	const Cite& cite = joueur.getCite();
 	while (true) {
-		system("cls");
+		clearScreen();
 		afficherInfos(joueur);
 		std::cout << "\n Chantier:\n\n";
 		afficherChantier(partie->getChantierRead(), index, pivot);
@@ -427,7 +426,7 @@ bool VueTerminal::choixCase(const JoueurHumain& joueur, Coord& pos, size_t index
 bool VueTerminal::choixRotation(const JoueurHumain& joueur, Coord pos, size_t index, Coord pivot) {
 	const Cite& cite = joueur.getCite();
 	while (true) {
-		system("cls");
+		clearScreen();
 		afficherInfos(joueur);
 		std::cout << "\n Chantier:\n\n";
 		afficherChantier(partie->getChantierRead(), index, pivot);
@@ -459,7 +458,7 @@ bool VueTerminal::choixRotation(const JoueurHumain& joueur, Coord pos, size_t in
 
 void VueTerminal::jouer() {
 	while (!partie->piocheVide()) {
-		system("cls");
+		clearScreen();
 		std::cout << "\n Tour " << partie->tour << "\nAppuyez sur Entree pour continuer";
 
 		int c = _getch();
@@ -493,7 +492,7 @@ void VueTerminal::tour(JoueurHumain& joueur) {
 		coup(joueur, choix, pos);
 	}
 
-	system("cls");
+	clearScreen();
 	std::cout << "Tuile posee avec succes!\nAppuyez sur Entree pour continuer";
 
 	int c = _getch();
@@ -515,7 +514,7 @@ std::vector<JoueurPtr> VueTerminal::creerJoueurs(const std::string& couleur, con
 		if (entrees.empty()) return{};
 		nbJoueurs = std::stoi(entrees[0]);
 		if (nbJoueurs > 4) {
-			system("cls");
+			clearScreen();
 			std::cout << "Entree invalide, appuyez sur ENTREE pour continuer.";
 			entreeAttendue({ ENTREE });
 		}
@@ -549,7 +548,7 @@ std::vector<JoueurPtr> VueTerminal::creerJoueurs(const std::string& couleur, con
 		joueurs.emplace_back(JoueurPtr(new IllustreArchitecte(d)));
 	}
 	
-	system("cls");
+	clearScreen();
 	for(auto& j : joueurs) {
         j->initCite();
     }
@@ -648,7 +647,7 @@ void menuPrincipalTerminal(const std::string& couleur, const std::string& contra
 }
 
 void explications(const std::string& couleur) {
-	system("cls");
+	clearScreen();
 	header(couleur);
 
 	//TEXTE
@@ -733,13 +732,13 @@ bool entreeNumerique(std::string entree, int max, int min) {
 			valide = true;
 		}
 		else {
-			system("cls");
+			clearScreen();
 			std::cout << "Entree invalide, appuyez sur Entree pour continuer";
 			entreeAttendue({ ENTREE });
 		}
 	}
 	else {
-		system("cls");
+		clearScreen();
 		std::cout << "Entree invalide, appuyez sur Entree pour continuer";
 		entreeAttendue({ ENTREE });
 	}

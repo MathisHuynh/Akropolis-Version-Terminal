@@ -3,8 +3,6 @@
 #include <vector>
 #include <map>
 #include <iomanip>
-
-#include <windows.h>
 #include <conio.h>
 #include <cctype>
 #include <optional>
@@ -17,6 +15,8 @@ struct Option {
     int offset{ 0 };
     bool numerique{ true };
 };
+
+void clearScreen();
 
 class Menu{
 protected:

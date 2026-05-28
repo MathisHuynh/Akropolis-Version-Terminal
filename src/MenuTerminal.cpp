@@ -1,5 +1,9 @@
 #include "MenuTerminal.h"
 
+void clearScreen(){
+    std::cout << "\033[2J\033[1;1H" << std::flush;
+}
+
 
 //================================================================
 //                          MENU
@@ -11,16 +15,16 @@
 std::string Menu::texteEncadre(const std::string& text, const std::string& couleur, int offset) const {
     size_t s = visible(text);
     size_t paddingG = (LARGEUR - s) / 2;
-    // Si la largeur visible est supérieure à la LARGEUR disponible, on n'ajoute pas de padding.
+    // Si la largeur visible est supï¿½rieure ï¿½ la LARGEUR disponible, on n'ajoute pas de padding.
     if (s > LARGEUR) paddingG = 0;
-    const size_t marge = 2; // Index après les deux barres "||"
+    const size_t marge = 2; // Index aprï¿½s les deux barres "||"
     size_t start = marge + paddingG + offset;
     std::string vide = VIDE;
     std::string res;
     res += couleur;
     res += vide.substr(0, marge); // Ajoute "||" (Index 0 et 1)
     res += std::string(paddingG + offset, ' ');
-    res += text; // text contient la couleur si elle change l'apparence du texte lui-même
+    res += text; // text contient la couleur si elle change l'apparence du texte lui-mï¿½me
 
     size_t paddingD = LARGEUR - (paddingG + s + offset);
     if (paddingD > 0) {
@@ -84,7 +88,7 @@ int Menu::afficherCentre(const std::string& text, char marker) {
 
     std::cout << std::string(padding, ' ') << text << "\n";
 
-    // Trouver la position du caractère où placer le curseur
+    // Trouver la position du caractï¿½re oï¿½ placer le curseur
     int relativePos = text.find(marker);
     if (relativePos == std::string::npos)
         return -1;
@@ -119,7 +123,7 @@ int MenuRestreint::loop(const std::string& couleur, const std::string& contraste
     char entree{ 0 };
     int choix{ 1 };
     while (entree != ENTREE) {
-        system("cls");
+        clearScreen();
         afficher(choix, couleur, contraste);
         std::vector<char> liste = { ECHAP,ENTREE,KEY_UP,KEY_DOWN };
         for (size_t i = 1; i <= options.size(); i++) liste.push_back(i + '0');
@@ -167,7 +171,7 @@ std::vector<std::string> MenuChamps::loop(const std::string& couleur, const std:
     bool entree = false;
     while (!entree) {
         res.clear();
-        system("cls");
+        clearScreen();
         std::vector<Coord> Pos = afficher(couleur, contraste);
         for (size_t i = 0 ; i < options.size(); i++) {
             entree = false;
@@ -175,7 +179,7 @@ std::vector<std::string> MenuChamps::loop(const std::string& couleur, const std:
             if (options[i].numerique) {
                 auto entreeR = nombreEchap(26); //changer
                 if (!entreeR) {
-                    system("cls");
+                    clearScreen();
                     if (i == 0) return {};
                     else break;
                 }
@@ -185,7 +189,7 @@ std::vector<std::string> MenuChamps::loop(const std::string& couleur, const std:
             else {
                 auto entreeR = texteEchap(26); //changer
                 if (!entreeR) {
-                    system("cls");
+                    clearScreen();
                     if (i == 0) return {};
                     else break;
                 }
@@ -194,7 +198,7 @@ std::vector<std::string> MenuChamps::loop(const std::string& couleur, const std:
             }
         }
     }
-    system("cls");
+    clearScreen();
     return res;
 }
 
@@ -236,13 +240,13 @@ bool entreeNum(std::string entree, int max, int min) {
             valide = true;
         }
         else {
-            system("cls");
+            clearScreen();
             std::cout << "Entree invalide, appuyez sur Entree pour continuer";
             entreeListe({ ENTREE });
         }
     }
     else {
-        system("cls");
+        clearScreen();
         std::cout << "Entree invalide, appuyez sur Entree pour continuer";
         entreeListe({ ENTREE });
     }
@@ -252,10 +256,10 @@ bool entreeNum(std::string entree, int max, int min) {
 std::optional<std::string> nombreEchap(size_t max) {
     std::string entree;
     while (true) {
-        int c = _getch(); //int pour les codes étendus (fleches etc.)
-        // Gestion des touches spéciales (Flèches, F1..., etc.)
+        int c = _getch(); //int pour les codes ï¿½tendus (fleches etc.)
+        // Gestion des touches spï¿½ciales (Flï¿½ches, F1..., etc.)
         if (c == 0 || c == 224) {
-            _getch(); // On prend le deuxième code pour l'ignorer
+            _getch(); // On prend le deuxiï¿½me code pour l'ignorer
             continue;
         }
         if (c == ECHAP) return std::nullopt;
@@ -300,7 +304,7 @@ std::optional<std::string> texteEchap(size_t max) {
                 std::cout << "\b \b";
             }
         }
-        // On accepte les caractères affichables
+        // On accepte les caractï¿½res affichables
         else if (c >= 32 && c <= 255 && entree.size() < max) {
             entree.push_back(static_cast<char>(c));
             std::cout << static_cast<char>(c);
@@ -312,7 +316,7 @@ size_t visible(const std::string& s) {
     size_t len = 0;
     for (size_t i = 0; i < s.size(); ) {
         if (s[i] == '\x1b' && i + 1 < s.size() && s[i + 1] == '[') {
-            // on est dans une séquence d'échappement CSI : \x1b[ ... jusqu'à 'm'
+            // on est dans une sï¿½quence d'ï¿½chappement CSI : \x1b[ ... jusqu'ï¿½ 'm'
             i += 2; // skip \x1b[
             while (i < s.size() && s[i] != 'm') ++i;
             if (i < s.size()) ++i; // skip final 'm'

@@ -1,6 +1,7 @@
 # Akropolis-LO21
 ## Description:
   L'objectif de ce projet et de concevoir et développer une application permettant de jouer au jeu de société **Akropolis** créé par *Jules Messaud*, et édité par *Gigamic*. Dans ce jeu, les joueurs prennent le rôle d'architectes qui s'a rontent en créant chacun une cité à l'aide de tuiles cité . Chaque tuile cité est composé de 3 hexagones construction , chaque hexagone représentant un quartier , une place ou une carrière.
+ 
   Ce projet a été élaboré dans le contexte du cours: LO21 - Programmation et Conception Orientées Objets à l'Université Technologique de Compiègne (UTC)
 
 Ce dépôt conserve la partie interface **Terminal** et **Moteur de Jeu** Réalisée par ***Mathis HUYNH***.

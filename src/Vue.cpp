@@ -270,10 +270,12 @@ size_t VueTerminal::choixTuile(const JoueurHumain& joueur) const {
 		afficherChantier(partie->getChantierRead());
 		std::cout << "\n Cite: \n";
 		afficher(joueur.getCite());
-		std::cout << "\nChoix de la tuile: ";
-
-		std::string entree;
-		std::cin >> entree;
+		std::cout << "\nChoix de la tuile:\n" << std::flush;
+		std::optional<std::string> optEntree = lireNombreAvecEchap(3);
+		if (!optEntree.has_value()) {
+			continue;
+		}
+		std::string entree = optEntree.value();
 
 		if (entreeNumerique(entree, getChantierRead().size() - 1)) {
 			choix = std::stoi(entree);
@@ -296,7 +298,7 @@ bool VueTerminal::choixPivot(const JoueurHumain& joueur, size_t index, Coord& pi
 		std::cout << "\n Cite: \n";
 		afficher(joueur.getCite());
 
-		std::cout << "\n Deplacez le pivot [z=Haut, s=Bas, q=Gauche, d=Droite, e=Valider, a=Annuler]: (" << pivot.first << " , " << pivot.second << ") ";
+		std::cout << "\n Deplacez le pivot [z=Haut, s=Bas, q=Gauche, d=Droite, e=Valider, a=Annuler]: (" << pivot.first << " , " << pivot.second << ") "<< std::flush;
 
 		char c = entreeAttendue({'z', 's', 'q', 'd', 'e', 'a', ECHAP, ENTREE});
 		if (c == 'q') {
@@ -334,7 +336,7 @@ bool VueTerminal::choixCase(const JoueurHumain& joueur, Coord& pos, size_t index
 		std::cout << "\n Cite: \n";
 		afficher(joueur.getCite(), pos);
 
-		std::cout << "\n Deplacez l'emplacement [z=Haut, s=Bas, q=Gauche, d=Droite, e=Valider, a=Annuler]: (" << pos.first << " , " << pos.second << ") ";
+		std::cout << "\n Deplacez l'emplacement [z=Haut, s=Bas, q=Gauche, d=Droite, e=Valider, a=Annuler]: (" << pos.first << " , " << pos.second << ") "<< std::flush;
 
 		char c = entreeAttendue({'z', 's', 'q', 'd', 'e', 'a', ECHAP, ENTREE});
 		if (c == 'q') {
@@ -369,7 +371,7 @@ bool VueTerminal::choixRotation(const JoueurHumain& joueur, Coord pos, size_t in
 		std::cout << "\n Cite: \n";
 		afficher(cite, partie->getChantierRead()[index]->getCoordPlateau(pos), partie->getChantierRead()[index]->rayon());
 
-		std::cout << "\n Choisissez la rotation [q=Gauche, d=Droite, e=Valider, a=Annuler]";
+		std::cout << "\n Choisissez la rotation [q=Gauche, d=Droite, e=Valider, a=Annuler]"<< std::flush;
 
 		char c = entreeAttendue({'q', 'd', 'e', 'a', ECHAP, ENTREE});
 		if (c == 'q') {

@@ -77,6 +77,6 @@ cmake --build .
 ```bash
 mkdir build-web
 cd build-web
-emcmake cmake -G "MinGW Makefiles" ..
+emcmake cmake -G "MinGW Makefiles" .. # ou emcmake cmake .. en Linux/macOS
 cmake --build .
 ```

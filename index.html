@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en-us">
+<html lang="fr">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -9,30 +9,249 @@
     <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
 
     <style>
-      body { font-family: arial; margin: 0; padding: none; background-color: #222; color: #fff; }
-      .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; text-align: center; }
-      .spinner {
-        height: 30px; width: 30px; margin: 20px auto 0 auto; display: block;
-        -webkit-animation: rotation .8s linear infinite; animation: rotation 0.8s linear infinite;
-        border-left: 5px solid rgb(235, 235, 235); border-right: 5px solid rgb(235, 235, 235);
-        border-bottom: 5px solid rgb(235, 235, 235); border-top: 5px solid rgb(120, 120, 120);
-        border-radius: 100%; background-color: rgb(189, 215, 46);
+      :root {
+        --bg-color: #0f141d;
+        --card-bg: #1a2332;
+        --accent-gold: #d4af37;
+        --accent-blue: #005a9c;
+        --text-color: #e2e8f0;
+        --text-muted: #94a3b8;
       }
-      @-webkit-keyframes rotation { from {-webkit-transform: rotate(0deg);} to {-webkit-transform: rotate(360deg);} }
+
+      body { 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        margin: 0; 
+        padding: 0; 
+        background-color: var(--bg-color); 
+        color: var(--text-color);
+        line-height: 1.6;
+      }
+
+      header {
+        background: linear-gradient(135deg, var(--accent-blue), #0a2540);
+        padding: 30px 20px;
+        text-align: center;
+        border-bottom: 3px solid var(--accent-gold);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        letter-spacing: 2px;
+        color: #fff;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      }
+
+      header p {
+        margin: 5px 0 0 0;
+        color: var(--accent-gold);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 30px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      /* Section Terminal (Centrée et principale) */
+      .game-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
+
+      .loader-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 15px;
+        min-height: 60px;
+      }
+
+      .spinner {
+        height: 25px; width: 25px; 
+        animation: rotation .8s linear infinite;
+        border-left: 4px solid var(--text-muted); 
+        border-right: 4px solid var(--text-muted);
+        border-bottom: 4px solid var(--text-muted); 
+        border-top: 4px solid var(--accent-gold);
+        border-radius: 100%; 
+      }
+
       @keyframes rotation { from {transform: rotate(0deg);} to {transform: rotate(360deg);} }
-      #status { font-weight: bold; color: rgb(120, 120, 120); margin-top: 10px; }
-      #progress { height: 20px; width: 300px; }
-      #terminal { width: 90%; max-width: 900px; min-height: 450px; margin: 20px auto; padding: 15px; box-sizing: border-box; background-color: black; border: 2px solid #444; border-radius: 5px; }
-      canvas.emscripten { display: none; } /* Masqué si votre jeu est 100% console */
+
+      #status { font-weight: bold; color: var(--accent-gold); margin-top: 8px; font-size: 0.9rem; }
+      #progress { height: 8px; width: 200px; background-color: #334155; border: none; border-radius: 4px; margin-top: 5px; }
+      #progress::-webkit-progress-value { background-color: var(--accent-gold); border-radius: 4px; }
+
+      #terminal { 
+        width: 100%; 
+        background-color: #000; 
+        border: 2px solid #334155; 
+        border-radius: 8px; 
+        padding: 15px; 
+        box-sizing: border-box;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      }
+
+      canvas.emscripten { display: none; }
+
+      /* Section Documentation (En dessous du terminal) */
+      .doc-section {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        width: 100%;
+      }
+
+      .card {
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        border-left: 4px solid var(--accent-blue);
+      }
+
+      .card.controls { border-left-color: var(--accent-gold); }
+
+      .card h2 {
+        margin-top: 0;
+        font-size: 1.4rem;
+        color: #fff;
+        border-bottom: 1px solid #334155;
+        padding-bottom: 8px;
+      }
+
+      .card h3 {
+        font-size: 1.05rem;
+        color: var(--accent-gold);
+        margin: 15px 0 5px 0;
+      }
+
+      .card p, .card li {
+        font-size: 0.95rem;
+        color: var(--text-color);
+      }
+
+      .card ul { padding-left: 20px; margin: 8px 0; }
+      .card li { margin-bottom: 6px; }
+
+      /* Tableau des touches */
+      .key-table {
+        width: 100%;
+        max-width: 600px;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      .key-table td {
+        padding: 10px 8px;
+        border-bottom: 1px solid #2d3748;
+        font-size: 0.95rem;
+      }
+
+      .key-table td:first-child {
+        width: 30%;
+      }
+
+      kbd {
+        background-color: #2d3748;
+        border: 1px solid #4a5568;
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-family: monospace;
+        color: #fff;
+        box-shadow: 0 2px 0 rgba(0,0,0,0.5);
+      }
+
+      footer {
+        text-align: center;
+        padding: 25px;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        border-top: 1px solid #1a2332;
+        margin-top: 40px;
+      }
     </style>
   </head>
   <body>
-    <div class="spinner" id='spinner'></div>
-    <div class="emscripten" id="status">Téléchargement...</div>
-    <div class="emscripten"><progress value="0" max="100" id="progress" hidden=1></progress></div>
-    <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
-    
-    <div id="terminal"></div>
+
+    <header>
+      <h1>AKROPOLIS</h1>
+      <p>Terminal Edition — Web WebAssembly</p>
+    </header>
+
+    <div class="container">
+      
+      <section class="game-section">
+        <div class="loader-container">
+          <div class="spinner" id='spinner'></div>
+          <div id="status">Téléchargement...</div>
+          <progress value="0" max="100" id="progress" hidden=1></progress>
+        </div>
+        
+        <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+        <div id="terminal"></div>
+      </section>
+
+      <section class="doc-section">
+        
+        <div class="card controls">
+          <h2>Commandes & Contrôles</h2>
+          <p>Cliquez à l'intérieur du terminal noir pour capturer le clavier avant de jouer.</p>
+          <table class="key-table">
+            <tr><td><kbd>Z</kbd> / <kbd>S</kbd></td><td>Déplacer vers le <strong>Haut</strong> / <strong>Bas</strong></td></tr>
+            <tr><td><kbd>Q</kbd> / <kbd>D</kbd></td><td>Déplacer vers la <strong>Gauche</strong> / <strong>Droite</strong></td></tr>
+            <tr><td><kbd>E</kbd> / <kbd>Entrée</kbd></td><td><strong>Valider</strong> l'action (choix, pivot, case)</td></tr>
+            <tr><td><kbd>A</kbd> / <kbd>Échap</kbd></td><td><strong>Annuler</strong> / Retour au menu principal</td></tr>
+          </table>
+        </div>
+
+        <div class="card">
+          <h2>Règles du Jeu</h2>
+          <p>Au cœur de la Méditerranée antique, des cités rivales cherchent à acquérir richesse et gloire. En tant qu'architecte, construisez la plus prestigieuse des cités à l'aide de différents quartiers.</p>
+          
+          <h3>Mécanique de score :</h3>
+          <ul>
+            <li><strong>Habitations (Bleu) :</strong> Marquent si elles forment le plus grand groupe continu.</li>
+            <li><strong>Marchés (Jaune) :</strong> Marquent s'ils sont isolés les uns des autres.</li>
+            <li><strong>Casernes (Rouge) :</strong> Marquent si elles sont situées à la périphérie de la cité.</li>
+            <li><strong>Temples (Violet) :</strong> Marquent s'ils sont complètement entourés.</li>
+            <li><strong>Jardins (Vert) :</strong> Marquent toujours, sans condition de placement.</li>
+          </ul>
+          <p><strong>Important :</strong> Les points de chaque type de quartier sont multipliés par le nombre d'<strong>Étoiles (Plaza)</strong> correspondantes présentes dans votre cité.</p>
+          
+          <h3>Hauteur (Étages) :</h3>
+          <p>Vous pouvez empiler les tuiles les unes sur les autres. Un quartier situé au niveau 2 rapporte double, au niveau 3 triple, etc.</p>
+        </div>
+
+        <div class="card">
+          <h2>Variantes Optionnelles</h2>
+          <p>Lors de la configuration de la partie, vous pouvez activer la variante pour chaque couleur afin d'ajouter des conditions de score expertes :</p>
+          <ul>
+            <li><strong>Habitations :</strong> Rapportent le double de points si le groupe principal fait au moins 10 cases.</li>
+            <li><strong>Marchés :</strong> Rapportent le double de points s'ils sont placés à côté d'une Plaza jaune.</li>
+            <li><strong>Casernes :</strong> Rapportent le double de points si elles ont 3 ou 4 espaces vides adjacents.</li>
+            <li><strong>Temples :</strong> Rapportent le double de points s'ils sont bâtis sur un niveau supérieur.</li>
+            <li><strong>Jardins :</strong> Rapportent le double de points s'ils touchent au moins un lac/bassin (espaces vides totalement entourés).</li>
+          </ul>
+        </div>
+
+      </section>
+    </div>
+
+    <footer>
+      Akropolis Terminal Edition — Propulsé par C++, Emscripten & Xterm.js
+    </footer>
 
     <script type='text/javascript'>
       var statusElement = document.getElementById('status');
@@ -41,8 +260,15 @@
       var canvasElement = document.getElementById('canvas');
       
       var term = new Terminal({
-        cols: 80, rows: 25, convertEol: true, cursorBlink: true,
-        theme: { background: '#000000', foreground: '#ffffff' }
+        cols: 80,
+        rows: 35, 
+        convertEol: true,
+        cursorBlink: true,
+        theme: {
+          background: '#000000',
+          foreground: '#ffffff',
+          cursor: '#d4af37'
+        }
       });
       term.open(document.getElementById('terminal'));
 
@@ -58,7 +284,10 @@
           progressElement.hidden = false; spinnerElement.hidden = false;
         } else {
           progressElement.value = null; progressElement.max = null; progressElement.hidden = true;
-          if (!text) spinnerElement.style.display = 'none';
+          if (!text) {
+            spinnerElement.style.display = 'none';
+            statusElement.style.display = 'none';
+          }
         }
         statusElement.innerHTML = text;
       };
@@ -81,7 +310,7 @@
       };
       
       window.term = term;
-      setStatus('Téléchargement...');
+      setStatus('Téléchargement des modules WebAssembly...');
     </script>
     
     <script async type="text/javascript" src="./page/Akropolis.js"></script>

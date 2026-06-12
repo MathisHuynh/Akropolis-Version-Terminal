@@ -8,93 +8,316 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
 
-    <link rel="stylesheet" href="./page/style.css">
+    <style>
+      /* --- Importation de la police --- */
+      @import url('https://fonts.cdnfonts.com/css/w95fa');
+
+      /* --- Palette de couleurs Windows 95 --- */
+      :root {
+        --win-desktop: #008080;
+        --win-surface: #c0c0c0;
+        --win-highlight: #ffffff;
+        --win-face: #dfdfdf;
+        --win-shadow: #808080;
+        --win-frame: #000000;
+        --win-title-bg: #000080;
+        --win-title-text: #ffffff;
+      }
+
+      body {
+        background-color: var(--win-desktop);
+        font-family: 'W95FA', 'MS Sans Serif', Tahoma, Arial, sans-serif;
+        color: var(--win-frame);
+        margin: 0;
+        padding: 20px;
+        font-size: 14px;
+        /* Rendu pixelisé net */
+        -webkit-font-smoothing: none;
+        font-smooth: never;
+      }
+
+      /* --- Fenêtre Principale --- */
+      .win95-window {
+        background-color: var(--win-surface);
+        border: 2px solid var(--win-face);
+        border-top-color: var(--win-highlight);
+        border-left-color: var(--win-highlight);
+        border-bottom-color: var(--win-frame);
+        border-right-color: var(--win-frame);
+        box-shadow: inset 1px 1px 0px var(--win-face), inset -1px -1px 0px var(--win-shadow);
+        padding: 2px;
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* --- Barre de titre --- */
+      header {
+        background-color: var(--win-title-bg);
+        color: var(--win-title-text);
+        padding: 3px 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      header h1 {
+        font-size: 16px;
+        margin: 0;
+        letter-spacing: 1px;
+      }
+
+      header p {
+        margin: 0;
+        font-size: 13px;
+        color: var(--win-surface);
+      }
+
+      /* --- Disposition --- */
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 5px 10px;
+      }
+
+      .game-section {
+        flex: 2 1 600px;
+      }
+
+      .doc-section {
+        flex: 1 1 350px;
+      }
+
+      /* --- Encarts creusés (Terminal & Loader) --- */
+      #terminal, .loader-container {
+        border: 2px solid var(--win-shadow);
+        border-right-color: var(--win-highlight);
+        border-bottom-color: var(--win-highlight);
+        border-top-color: var(--win-shadow);
+        border-left-color: var(--win-shadow);
+        box-shadow: inset 1px 1px 0px var(--win-frame);
+        background-color: var(--win-frame);
+        padding: 4px;
+      }
+
+      .loader-container {
+        background-color: var(--win-surface);
+        box-shadow: none;
+        border-top-color: var(--win-shadow);
+        border-left-color: var(--win-shadow);
+        border-bottom-color: var(--win-highlight);
+        border-right-color: var(--win-highlight);
+        color: var(--win-frame);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+
+      #status {
+        font-size: 13px;
+      }
+
+      /* --- Barre de progression --- */
+      progress {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 20px;
+        border: 1px solid var(--win-shadow);
+        border-right-color: var(--win-highlight);
+        border-bottom-color: var(--win-highlight);
+        background-color: var(--win-surface);
+      }
+      progress::-webkit-progress-bar { background-color: var(--win-surface); }
+      progress::-webkit-progress-value { background-color: var(--win-title-bg); }
+      progress::-moz-progress-bar { background-color: var(--win-title-bg); }
+
+      /* --- Group Boxes (Cartes) --- */
+      .card {
+        border: 2px solid var(--win-highlight);
+        border-top-color: var(--win-shadow);
+        border-left-color: var(--win-shadow);
+        padding: 15px 10px 10px 10px;
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .card h2 {
+        position: absolute;
+        top: -10px;
+        left: 10px;
+        background-color: var(--win-surface);
+        padding: 0 5px;
+        font-size: 13px;
+        margin: 0;
+      }
+
+      .card h3 {
+        font-size: 13px;
+        margin: 12px 0 4px 0;
+        text-decoration: underline;
+      }
+
+      .card p, .card ul {
+        margin: 6px 0;
+        line-height: 1.3;
+        font-size: 13px;
+      }
+      
+      .card ul {
+        padding-left: 20px;
+      }
+
+      /* --- Touches clavier 3D --- */
+      kbd {
+        background-color: var(--win-surface);
+        border: 2px solid var(--win-face);
+        border-top-color: var(--win-highlight);
+        border-left-color: var(--win-highlight);
+        border-bottom-color: var(--win-frame);
+        border-right-color: var(--win-frame);
+        box-shadow: inset 1px 1px 0px var(--win-face), inset -1px -1px 0px var(--win-shadow);
+        padding: 1px 6px;
+        font-family: 'W95FA', monospace;
+        font-size: 12px;
+        display: inline-block;
+      }
+
+      .key-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      .key-table td {
+        padding: 4px 0;
+        font-size: 13px;
+      }
+
+      .key-table td:first-child {
+        width: 45%;
+      }
+
+      /* --- Footer --- */
+      footer {
+        text-align: center;
+        padding: 10px;
+        font-size: 12px;
+        border-top: 1px solid var(--win-shadow);
+        margin: 10px 10px 0 10px;
+        box-shadow: inset 0 1px 0 var(--win-highlight);
+      }
+
+      #canvas {
+        display: none;
+      }
+      
+      /* Spinner pixel art */
+      .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--win-frame);
+        border-top-color: var(--win-surface);
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
   </head>
   <body>
 
-    <header>
-      <h1>AKROPOLIS</h1>
-      <p>Terminal Edition — Web WebAssembly</p>
-    </header>
+    <main class="win95-window">
+      <header>
+        <h1>AKROPOLIS</h1>
+        <p>Terminal Edition — WebAssembly</p>
+      </header>
 
-    <div class="container">
-      
-      <section class="game-section">
-        <div class="loader-container">
-          <div class="spinner" id='spinner'></div>
-          <div id="status">Téléchargement...</div>
-          <progress value="0" max="100" id="progress" hidden=1></progress>
-        </div>
+      <div class="container">
         
-        <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
-        <div id="terminal"></div>
-      </section>
-
-      <section class="doc-section">
-        
-        <div class="card controls">
-          <h2>Commandes & Contrôles</h2>
-          <p>Cliquez à l'intérieur du terminal noir pour capturer le clavier avant de jouer.</p>
-          <table class="key-table">
-            <tr><td><kbd>Z</kbd> / <kbd>S</kbd></td><td>Déplacer vers le <strong>Haut</strong> / <strong>Bas</strong></td></tr>
-            <tr><td><kbd>Q</kbd> / <kbd>D</kbd></td><td>Déplacer vers la <strong>Gauche</strong> / <strong>Droite</strong></td></tr>
-            <tr><td><kbd>E</kbd> / <kbd>Entrée</kbd></td><td><strong>Valider</strong> l'action (choix, pivot, case)</td></tr>
-            <tr><td><kbd>A</kbd> / <kbd>Échap</kbd></td><td><strong>Annuler</strong> / Retour au menu principal</td></tr>
-          </table>
-        </div>
-
-        <div class="card">
-          <h2>Règles du Jeu</h2>
-          <p>Au cœur de la Méditerranée antique, des cités rivales cherchent à acquérir richesse et gloire. En tant qu'architecte, construisez la plus prestigieuse des cités à l'aide de différents quartiers.</p>
+        <section class="game-section">
+          <div class="loader-container" id="loader-wrapper">
+            <div class="spinner" id='spinner'></div>
+            <div id="status">Téléchargement en cours...</div>
+            <progress value="0" max="100" id="progress" hidden=1></progress>
+          </div>
           
-          <h3>Mécanique de score :</h3>
-          <ul>
-            <li><strong>Habitations (Bleu) :</strong> Marquent si elles forment le plus grand groupe continu.</li>
-            <li><strong>Marchés (Jaune) :</strong> Marquent s'ils sont isolés les uns des autres.</li>
-            <li><strong>Casernes (Rouge) :</strong> Marquent si elles sont situées à la périphérie de la cité.</li>
-            <li><strong>Temples (Violet) :</strong> Marquent s'ils sont complètement entourés.</li>
-            <li><strong>Jardins (Vert) :</strong> Marquent toujours, sans condition de placement.</li>
-          </ul>
-          <p><strong>Important :</strong> Les points de chaque type de quartier sont multipliés par le nombre d'<strong>Étoiles (Plaza)</strong> correspondantes présentes dans votre cité.</p>
+          <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+          <div id="terminal"></div>
+        </section>
+
+        <section class="doc-section">
           
-          <h3>Hauteur (Étages) :</h3>
-          <p>Vous pouvez empiler les tuiles les unes sur les autres. Un quartier situé au niveau 2 rapporte double, au niveau 3 triple, etc.</p>
-        </div>
+          <div class="card controls">
+            <h2>Commandes & Contrôles</h2>
+            <p>Cliquez à l'intérieur du terminal noir pour capturer le clavier avant de jouer.</p>
+            <table class="key-table">
+              <tr><td><kbd>Z</kbd> / <kbd>S</kbd></td><td>Déplacer vers le <strong>Haut</strong> / <strong>Bas</strong></td></tr>
+              <tr><td><kbd>Q</kbd> / <kbd>D</kbd></td><td>Déplacer vers la <strong>Gauche</strong> / <strong>Droite</strong></td></tr>
+              <tr><td><kbd>E</kbd> / <kbd>Entrée</kbd></td><td><strong>Valider</strong> l'action</td></tr>
+              <tr><td><kbd>A</kbd> / <kbd>Échap</kbd></td><td><strong>Annuler</strong> / Retour au menu</td></tr>
+            </table>
+          </div>
 
-        <div class="card">
-          <h2>Variantes Optionnelles</h2>
-          <p>Lors de la configuration de la partie, vous pouvez activer la variante pour chaque couleur afin d'ajouter des conditions de score expertes :</p>
-          <ul>
-            <li><strong>Habitations :</strong> Rapportent le double de points si le groupe principal fait au moins 10 cases.</li>
-            <li><strong>Marchés :</strong> Rapportent le double de points s'ils sont placés à côté d'une Plaza jaune.</li>
-            <li><strong>Casernes :</strong> Rapportent le double de points si elles ont 3 ou 4 espaces vides adjacents.</li>
-            <li><strong>Temples :</strong> Rapportent le double de points s'ils sont bâtis sur un niveau supérieur.</li>
-            <li><strong>Jardins :</strong> Rapportent le double de points s'ils touchent au moins un lac/bassin (espaces vides totalement entourés).</li>
-          </ul>
-        </div>
+          <div class="card">
+            <h2>Règles du Jeu</h2>
+            <p>Au cœur de la Méditerranée antique, des cités rivales cherchent à acquérir richesse et gloire. Construisez la plus prestigieuse des cités à l'aide de différents quartiers.</p>
+            
+            <h3>Mécanique de score :</h3>
+            <ul>
+              <li><strong>Habitations (Bleu) :</strong> Le plus grand groupe continu.</li>
+              <li><strong>Marchés (Jaune) :</strong> Isolés les uns des autres.</li>
+              <li><strong>Casernes (Rouge) :</strong> À la périphérie de la cité.</li>
+              <li><strong>Temples (Violet) :</strong> Complètement entourés.</li>
+              <li><strong>Jardins (Vert) :</strong> Marquent toujours.</li>
+            </ul>
+            <p><strong>Important :</strong> Multiplié par le nombre d'<strong>Étoiles (Plaza)</strong> correspondantes présentes.</p>
+            
+            <h3>Hauteur (Étages) :</h3>
+            <p>Un quartier situé au niveau 2 rapporte double, au niveau 3 triple, etc.</p>
+          </div>
 
-      </section>
-    </div>
+          <div class="card">
+            <h2>Variantes Optionnelles</h2>
+            <p>Conditions de score expertes :</p>
+            <ul>
+              <li><strong>Habitations :</strong> x2 si groupe de 10 cases ou plus.</li>
+              <li><strong>Marchés :</strong> x2 si adjacent à une Plaza jaune.</li>
+              <li><strong>Casernes :</strong> x2 si 3 ou 4 espaces vides adjacents.</li>
+              <li><strong>Temples :</strong> x2 si sur un niveau supérieur.</li>
+              <li><strong>Jardins :</strong> x2 si touchent un lac (vide entouré).</li>
+            </ul>
+          </div>
 
-    <footer>
-      Akropolis Terminal Edition — Propulsé par C++, Emscripten & Xterm.js
-    </footer>
+        </section>
+      </div>
+
+      <footer>
+        Akropolis Terminal Edition — Propulsé par C++, Emscripten & Xterm.js
+      </footer>
+    </main>
 
     <script type='text/javascript'>
       var statusElement = document.getElementById('status');
       var progressElement = document.getElementById('progress');
       var spinnerElement = document.getElementById('spinner');
       var canvasElement = document.getElementById('canvas');
+      var loaderWrapper = document.getElementById('loader-wrapper');
       
       var term = new Terminal({
         cols: 80,
         rows: 35, 
         convertEol: true,
         cursorBlink: true,
+        fontFamily: "'W95FA', monospace",
+        fontSize: 16,
         theme: {
           background: '#000000',
           foreground: '#ffffff',
-          cursor: '#d4af37'
+          cursor: '#c0c0c0'
         }
       });
       term.open(document.getElementById('terminal'));
@@ -106,14 +329,19 @@
         var now = Date.now();
         if (m && now - setStatus.last.time < 30) return;
         setStatus.last.time = now; setStatus.last.text = text;
+        
         if (m) {
-          text = m[1]; progressElement.value = parseInt(m[2])*100; progressElement.max = parseInt(m[4])*100;
-          progressElement.hidden = false; spinnerElement.hidden = false;
+          text = m[1]; 
+          progressElement.value = parseInt(m[2])*100; 
+          progressElement.max = parseInt(m[4])*100;
+          progressElement.hidden = false; 
+          spinnerElement.hidden = false;
         } else {
-          progressElement.value = null; progressElement.max = null; progressElement.hidden = true;
+          progressElement.value = null; 
+          progressElement.max = null; 
+          progressElement.hidden = true;
           if (!text) {
-            spinnerElement.style.display = 'none';
-            statusElement.style.display = 'none';
+            loaderWrapper.style.display = 'none';
           }
         }
         statusElement.innerHTML = text;

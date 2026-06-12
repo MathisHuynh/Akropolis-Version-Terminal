@@ -79,12 +79,16 @@
       .container {
         display: flex;
         flex-wrap: wrap;
+        /* flex-direction: column; */
         gap: 15px;
         padding: 5px 10px;
       }
 
       .game-section {
-        flex: 2 1 600px;
+        flex: 1 1 auto;
+        max-width: fit-content;  /* ne dépasse jamais la largeur du terminal */
+        min-width: 0;
+        overflow: hidden;
       }
 
       .doc-section {
@@ -95,9 +99,10 @@
       #terminal {
         background-color: var(--win-frame);
         padding: 4px;
+        display: inline-block;
         overflow: hidden;
-        width: 100%;
-        box-sizing: border-box;
+        flex-shrink: 0;
+        vertical-align: top;
       }
       .loader-container {
         border: 2px solid var(--win-shadow);
@@ -306,29 +311,35 @@
         Akropolis Terminal Edition — Propulsé par C++, Emscripten & Xterm.js
       </footer>
     </main>
-
+z
     <script type='text/javascript'>
       var statusElement = document.getElementById('status');
       var progressElement = document.getElementById('progress');
       var spinnerElement = document.getElementById('spinner');
       var canvasElement = document.getElementById('canvas');
       var loaderWrapper = document.getElementById('loader-wrapper');
-      
+
       var term = new Terminal({
         cols: 80,
-        rows: 35, 
+        rows: 35,
         convertEol: true,
         cursorBlink: true,
-        fontSize: 14, 
-        fontFamily: "'W95FA', 'Courier New', monospace",
+        fontSize: 14,
+        fontFamily: "'Courier New', monospace",
+        lineHeight: 1.0,
+        letterSpacing: 0,
+        scrollback: 0,
         theme: {
           background: '#000000',
           foreground: '#ffffff',
           cursor: '#c0c0c0'
         }
       });
-
-      term.open(document.getElementById('terminal'));
+      
+      document.fonts.ready.then(() => {
+        term.open(document.getElementById('terminal'));
+        term.resize(80, 35);
+      });
 
       var setStatus = (text) => {
         if (!setStatus.last) setStatus.last = { time: Date.now(), text: '' };

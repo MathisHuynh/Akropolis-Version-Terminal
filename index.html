@@ -92,7 +92,14 @@
       }
 
       /* --- Encarts creusés (Terminal & Loader) --- */
-      #terminal, .loader-container {
+      #terminal {
+        background-color: var(--win-frame);
+        padding: 4px;
+        overflow: hidden;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .loader-container {
         border: 2px solid var(--win-shadow);
         border-right-color: var(--win-highlight);
         border-bottom-color: var(--win-highlight);
@@ -312,14 +319,15 @@
         rows: 35, 
         convertEol: true,
         cursorBlink: true,
-        fontFamily: "'W95FA', monospace",
-        fontSize: 16,
+        fontSize: 14, 
+        fontFamily: "'W95FA', 'Courier New', monospace",
         theme: {
           background: '#000000',
           foreground: '#ffffff',
           cursor: '#c0c0c0'
         }
       });
+
       term.open(document.getElementById('terminal'));
 
       var setStatus = (text) => {
@@ -365,6 +373,11 @@
       };
       
       window.term = term;
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          term.refresh();
+        }, 500);
+      });
       setStatus('Téléchargement des modules WebAssembly...');
     </script>
     
